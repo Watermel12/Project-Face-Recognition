@@ -96,29 +96,39 @@ docker compose ps
 pip install -r requirements.txt
 ```
 
-> **CPU only (default):** The `requirements.txt` uses `onnxruntime` by default - works on any machine without a GPU.
+> **CPU only (default):** The `requirements.txt` uses `onnxruntime` by default — works on any machine without a GPU.
 >
-> **GPU (CUDA):** If your machine has an NVIDIA GPU, replace `onnxruntime` with `onnxruntime-gpu` in `requirements.txt`, then reinstall:
-> ```bash
-> pip install -r requirements.txt
-> ```
-> Then verify GPU is detected:
-> ```bash
-> python -c "import onnxruntime as ort; print(ort.get_available_providers())"
-> ```
-> You should see `CUDAExecutionProvider` in the list.
+> **GPU (CUDA) — Windows setup:**
 >
-> **CUDA + cuDNN setup (Windows):**
-> 1. Install [CUDA Toolkit 12.x or 13.x](https://developer.nvidia.com/cuda-downloads) matching your driver version (check with `nvidia-smi`)
-> 2. Install [cuDNN 9.x](https://developer.nvidia.com/cudnn-downloads) for your CUDA version
-> 3. Copy all `.dll` files from the cuDNN `bin/` folder into your CUDA `bin/` folder:
->    ```
->    C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\vXX.X\bin\
->    ```
-> 4. Install the correct onnxruntime-gpu version:
+> 1. Check your CUDA version:
 >    ```bash
+>    nvidia-smi
+>    ```
+>
+> 2. Install [CUDA Toolkit 12.x](https://developer.nvidia.com/cuda-12-6-0-download-archive)
+>    - Choose: Windows → x86_64 → 11 → exe (local)
+>
+> 3. Install [cuDNN 9.x for CUDA 12](https://developer.nvidia.com/cudnn-downloads)
+>    - Choose: Windows → x86_64 → 11
+>    - Run the `.exe` installer
+>
+> 4. Copy cuDNN `.dll` files into CUDA bin folder:
+>    ```bash
+>    xcopy "C:\Program Files\NVIDIA\CUDNN\v9.x\bin\12.x\x64\*" "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6\bin\" /y
+>    ```
+>    *(Replace `v9.x` and `12.x` with your actual installed versions)*
+>
+> 5. Replace `onnxruntime` with `onnxruntime-gpu` in `requirements.txt`, then:
+>    ```bash
+>    pip install -r requirements.txt
 >    pip install onnxruntime-gpu==1.24.4
 >    ```
+>
+> 6. Verify GPU is detected:
+>    ```bash
+>    python -c "import onnxruntime as ort; print(ort.get_available_providers())"
+>    ```
+>    You should see `CUDAExecutionProvider` in the list. ✅  ```
 
 ### 6. Run the API backend
 
