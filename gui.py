@@ -327,13 +327,27 @@ class FaceItemWidget(QWidget):
             ref_lbl.setFixedSize(60, 60)
             ref_lbl.setStyleSheet("border-radius: 5px; border: 1px solid #777;")
             try:
-                # Load from API
-                url = f"http://localhost:8000/faces/{name}.jpg"
-                res = requests.get(url, timeout=1)
-                if res.status_code == 200:
-                    ref_qimg = QImage()
-                    ref_qimg.loadFromData(res.content)
-                    ref_pix = QPixmap.fromImage(ref_qimg).scaled(60, 60, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                faces_dir = "./assets/faces"
+                found_img = None
+                if os.path.exists(faces_dir):
+                    for f in sorted(os.listdir(faces_dir)):
+                        if not (f.endswith(".jpg") or f.endswith(".png")):
+                            continue
+                        fname = f.rsplit(".", 1)[0]
+                        base = fname.rsplit("_", 1)[0]
+                        if fname == name or base == name:
+                            found_img = os.path.join(faces_dir, f)
+                            break
+                
+                if found_img:
+                    img = cv2.imread(found_img)
+                    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                    h, w, c = img.shape
+                    ref_qimg = QImage(img.data.tobytes(), w, h, w * c, QImage.Format.Format_RGB888)
+                    ref_pix = QPixmap.fromImage(ref_qimg).scaled(
+                        60, 60, Qt.AspectRatioMode.KeepAspectRatio, 
+                        Qt.TransformationMode.SmoothTransformation
+                    )
                     ref_lbl.setPixmap(ref_pix)
                 else:
                     ref_lbl.setText("No DB\nIMG")
