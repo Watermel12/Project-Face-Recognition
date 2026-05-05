@@ -96,21 +96,29 @@ docker compose ps
 pip install -r requirements.txt
 ```
 
-> **GPU:** Replace `onnxruntime-gpu` with `onnxruntime` in `requirements.txt` if you have CUDA.
+> **CPU only (default):** The `requirements.txt` uses `onnxruntime` by default — works on any machine without a GPU.
 >
-> **Windows + Conda:** Use `python -m pip install -r requirements.txt` after `conda activate <env>`, avoid using `pip --user`.
->
-> **Important:** If Python is prioritizing packages from `C:\Users\<user>\AppData\Roaming\Python\...` so `onnxruntime-gpu` inside the conda env may be shadowed by the CPU version of `onnxruntime` CPU, causing the model to run on CPU even if CUDA is available.
->
-> To prevent this:
+> **GPU (CUDA):** If your machine has an NVIDIA GPU, replace `onnxruntime` with `onnxruntime-gpu` in `requirements.txt`, then reinstall:
 > ```bash
-> conda env config vars set -n <env> PYTHONNOUSERSITE=1
-> conda activate <env>
-> python -m pip install -r requirements.txt
-> python -c "import onnxruntime as ort; print(ort.__file__); print(ort.get_available_providers())"
+> pip install -r requirements.txt
 > ```
+> Then verify GPU is detected:
+> ```bash
+> python -c "import onnxruntime as ort; print(ort.get_available_providers())"
+> ```
+> You should see `CUDAExecutionProvider` in the list.
 >
-> For fresh installs on Windows, Python 3.11 is recommended to reduce package conflict risks.
+> **CUDA + cuDNN setup (Windows):**
+> 1. Install [CUDA Toolkit 12.x or 13.x](https://developer.nvidia.com/cuda-downloads) matching your driver version (check with `nvidia-smi`)
+> 2. Install [cuDNN 9.x](https://developer.nvidia.com/cudnn-downloads) for your CUDA version
+> 3. Copy all `.dll` files from the cuDNN `bin/` folder into your CUDA `bin/` folder:
+>    ```
+>    C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\vXX.X\bin\
+>    ```
+> 4. Install the correct onnxruntime-gpu version:
+>    ```bash
+>    pip install onnxruntime-gpu==1.24.4
+>    ```
 
 ### 6. Run the API backend
 
