@@ -96,7 +96,7 @@ docker compose ps
 pip install -r requirements.txt
 ```
 
-> **CPU only (default):** The `requirements.txt` uses `onnxruntime` by default — works on any machine without a GPU.
+> **CPU only (default):** The `requirements.txt` uses `onnxruntime` by default - works on any machine without a GPU.
 >
 > **GPU (CUDA):** If your machine has an NVIDIA GPU, replace `onnxruntime` with `onnxruntime-gpu` in `requirements.txt`, then reinstall:
 > ```bash
