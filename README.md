@@ -96,21 +96,39 @@ docker compose ps
 pip install -r requirements.txt
 ```
 
-> **GPU:** Replace `onnxruntime-gpu` with `onnxruntime` in `requirements.txt` if you have CUDA.
+> **CPU only (default):** The `requirements.txt` uses `onnxruntime` by default — works on any machine without a GPU.
 >
-> **Windows + Conda:** Use `python -m pip install -r requirements.txt` after `conda activate <env>`, avoid using `pip --user`.
+> **GPU (CUDA) — Windows setup:**
 >
-> **Important:** If Python is prioritizing packages from `C:\Users\<user>\AppData\Roaming\Python\...` so `onnxruntime-gpu` inside the conda env may be shadowed by the CPU version of `onnxruntime` CPU, causing the model to run on CPU even if CUDA is available.
+> 1. Check your CUDA version:
+>    ```bash
+>    nvidia-smi
+>    ```
 >
-> To prevent this:
-> ```bash
-> conda env config vars set -n <env> PYTHONNOUSERSITE=1
-> conda activate <env>
-> python -m pip install -r requirements.txt
-> python -c "import onnxruntime as ort; print(ort.__file__); print(ort.get_available_providers())"
-> ```
+> 2. Install [CUDA Toolkit 12.x](https://developer.nvidia.com/cuda-12-6-0-download-archive)
+>    - Choose: Windows → x86_64 → 11 → exe (local)
 >
-> For fresh installs on Windows, Python 3.11 is recommended to reduce package conflict risks.
+> 3. Install [cuDNN 9.x for CUDA 12](https://developer.nvidia.com/cudnn-downloads)
+>    - Choose: Windows → x86_64 → 11
+>    - Run the `.exe` installer
+>
+> 4. Copy cuDNN `.dll` files into CUDA bin folder:
+>    ```bash
+>    xcopy "C:\Program Files\NVIDIA\CUDNN\v9.x\bin\12.x\x64\*" "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6\bin\" /y
+>    ```
+>    *(Replace `v9.x` and `12.x` with your actual installed versions)*
+>
+> 5. Replace `onnxruntime` with `onnxruntime-gpu` in `requirements.txt`, then:
+>    ```bash
+>    pip install -r requirements.txt
+>    pip install onnxruntime-gpu==1.24.4
+>    ```
+>
+> 6. Verify GPU is detected:
+>    ```bash
+>    python -c "import onnxruntime as ort; print(ort.get_available_providers())"
+>    ```
+>    You should see `CUDAExecutionProvider` in the list. ✅  ```
 
 ### 6. Run the API backend
 
