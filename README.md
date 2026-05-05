@@ -48,7 +48,7 @@ Integrated Real-time Facial Recognition System **Desktop GUI**, **REST API**, **
 
 ```bash
 git clone https://github.com/Watermel12/Project-Face-Recognition.git
-cd face-reidentification
+cd Project-Face-Recognition
 ```
 
 ### 2. Download model weights
